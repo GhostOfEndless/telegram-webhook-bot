@@ -1,0 +1,11 @@
+telegram:
+  bot:
+    token: "6687504052:AAHTO74sbMK2sje-C5bIMhYxHZa5Ru-7XXY"
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: be46a388
+server:
+  port: 8083

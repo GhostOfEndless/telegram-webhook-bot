@@ -1,0 +1,5 @@
+rootProject.name = 'telegram-webhook-bot'
+include 'dispatcher'
+include 'common-rabbitmq'
+include 'node'
+
