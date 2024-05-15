@@ -4,5 +4,11 @@ spring:
     port: 5672
     username: user
     password: be46a388
+  datasource:
+    url: jdbc:postgresql://localhost:5436/telegram
+    password: password
+    username: user
+  jpa:
+    generate-ddl: true
 server:
   port: 8083
