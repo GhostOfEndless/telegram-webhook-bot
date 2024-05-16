@@ -19,7 +19,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp:3.2.5'
     testImplementation('org.springframework.boot:spring-boot-starter-test:3.2.5')
     implementation project(':common-rabbitmq')
-    testImplementation 'org.springframework.amqp:spring-rabbit-test:3.2.5'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
 }
 
 test {

@@ -1,22 +1,26 @@
 package ru.synthiq.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode(exclude = "id")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "id")
 @Entity
-@Table(name = "binary_content")
-public class BinaryContent {
+@Table(name = "app_photo")
+public class AppPhoto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private byte[] fileAsArrayOfBytes;
+    private String telegramFileId;
+
+    @OneToOne
+    private BinaryContent binaryContent;
+
+    private Integer fileSize;
 }

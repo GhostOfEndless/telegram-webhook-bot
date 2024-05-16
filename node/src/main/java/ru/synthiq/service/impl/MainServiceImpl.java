@@ -7,14 +7,19 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.synthiq.dao.AppUserDAO;
 import ru.synthiq.dao.RawDataDAO;
+import ru.synthiq.entity.AppDocument;
+import ru.synthiq.entity.AppPhoto;
 import ru.synthiq.entity.AppUser;
 import ru.synthiq.entity.RawData;
+import ru.synthiq.exceptions.UploadFileException;
+import ru.synthiq.service.FileService;
 import ru.synthiq.service.MainService;
 import ru.synthiq.service.ProducerService;
+import ru.synthiq.service.enums.ServiceCommand;
 
 import static ru.synthiq.entity.enums.UserState.BASIC_STATE;
 import static ru.synthiq.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
-import static ru.synthiq.service.ServiceCommands.*;
+import static ru.synthiq.service.enums.ServiceCommand.*;
 
 @Slf4j
 @Service
@@ -24,6 +29,7 @@ public class MainServiceImpl implements MainService {
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
     private final AppUserDAO appUserDAO;
+    private final FileService fileService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -34,7 +40,8 @@ public class MainServiceImpl implements MainService {
         var text = update.getMessage().getText();
         var output = "";
 
-        if (CANCEL.equals(text)) {
+        var serviceCommand = ServiceCommand.fromValue(text);
+        if (CANCEL.equals(serviceCommand)) {
             output = cancelProcess(appUser);
         } else if (BASIC_STATE.equals(userState)) {
             output = processServiceCommand(appUser, text);
@@ -61,6 +68,17 @@ public class MainServiceImpl implements MainService {
             return;
         }
         // TODO: добавить сохранение документа
+        try {
+            AppDocument doc = fileService.processDoc(update.getMessage());
+            // TODO Добавить генерацию ссылки для скачивания документа
+            var answer = "Документ успешно загружен! "
+                    + "Ссылка для скачивания: http://test.ru/get-doc/777";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException ex) {
+            log.error(ex.getMessage());
+            String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
+            sendAnswer(error, chatId);
+        }
 
         var answer = "Документ успешно загружен! Ссылка для скачивания  http://test.ru/get-doc/777";
         sendAnswer(answer, chatId);
@@ -91,8 +109,17 @@ public class MainServiceImpl implements MainService {
         }
         // TODO: добавить сохранение фото
 
-        var answer = "Фото успешно загружено! Ссылка для скачивания  http://test.ru/get-photo/777";
-        sendAnswer(answer, chatId);
+        try {
+            AppPhoto photo = fileService.processPhoto(update.getMessage());
+            // TODO добавить генерацию ссылки для скачивания фото
+            var answer = "Фото успешно загружено! " +
+                    "Ссылка для скачивания  http://test.ru/get-photo/777";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException ex) {
+            log.error(ex.getMessage());
+            String error = "К сожалению, загрузка фото не удалась. Повторите попытку позже.";
+            sendAnswer(error, chatId);
+        }
     }
 
     private void sendAnswer(String output, String chatId) {
@@ -101,12 +128,13 @@ public class MainServiceImpl implements MainService {
     }
 
     private String processServiceCommand(AppUser appUser, String command) {
-        if (REGISTRATION.equals(command)) {
+        var serviceCommand = ServiceCommand.fromValue(command);
+        if (REGISTRATION.equals(serviceCommand)) {
             // TODO добавить регистрацию
             return "Временно недоступно";
-        } else if (HELP.equals(command)) {
+        } else if (HELP.equals(serviceCommand)) {
             return help();
-        } else if (START.equals(command)) {
+        } else if (START.equals(serviceCommand)) {
             return "Приветствую! Чтобы посмотреть список доступных команд введите /help";
         } else {
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";

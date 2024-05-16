@@ -12,3 +12,12 @@ spring:
     generate-ddl: true
 server:
   port: 8083
+
+telegram:
+  bot:
+    token: "6687504052:AAHTO74sbMK2sje-C5bIMhYxHZa5Ru-7XXY"
+  service:
+    file-info:
+      uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
+    file-storage:
+      uri: https://api.telegram.org/file/bot{token}/{filePath}
