@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/common-rabbitmq" />
             <option value="$PROJECT_DIR$/dispatcher" />
             <option value="$PROJECT_DIR$/node" />
+            <option value="$PROJECT_DIR$/rest-service" />
           </set>
         </option>
       </GradleProjectSettings>

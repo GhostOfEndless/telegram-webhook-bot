@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5436/telegram
+    password: password
+    username: user
+  jpa:
+    generate-ddl: true
+server:
+  port: 8086
