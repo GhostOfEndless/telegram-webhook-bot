@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.hashids/hashids
+    implementation 'org.hashids:hashids:1.0.3'
+
+}

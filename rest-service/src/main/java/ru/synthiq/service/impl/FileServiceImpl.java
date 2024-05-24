@@ -11,6 +11,7 @@ import ru.synthiq.entity.AppDocument;
 import ru.synthiq.entity.AppPhoto;
 import ru.synthiq.entity.BinaryContent;
 import ru.synthiq.service.FileService;
+import ru.synthiq.utils.CryptoTool;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,18 +23,17 @@ public class FileServiceImpl implements FileService {
 
     private final AppDocumentDAO appDocumentDAO;
     private final AppPhotoDAO appPhotoDAO;
+    private final CryptoTool cryptoTool;
 
     @Override
     public AppDocument getDocument(String documentId) {
-        // TODO добавить дешифрование хеш-строки
-        var id = Long.parseLong(documentId);
+        var id = cryptoTool.idOf(documentId);
         return appDocumentDAO.findById(id).orElse(null);
     }
 
     @Override
     public AppPhoto getPhoto(String photoId) {
-        // TODO добавить дешифрование хеш-строки
-        var id = Long.parseLong(photoId);
+        var id = cryptoTool.idOf(photoId);
         return appPhotoDAO.findById(id).orElse(null);
     }
 

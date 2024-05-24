@@ -21,3 +21,7 @@ telegram:
       uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
     file-storage:
       uri: https://api.telegram.org/file/bot{token}/{filePath}
+
+salt: "Pq12GSnZ5CwkrmutojxQbM13cRi8speFya7600NUYKgThHAWJIfLdD9V4XEvzB"
+link:
+  address: "127.0.0.1:8086"

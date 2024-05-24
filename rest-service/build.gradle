@@ -21,6 +21,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test:3.2.5')
     runtimeOnly 'org.postgresql:postgresql'
     implementation project(':common-jpa')
+    implementation project(':common-utils')
 }
 
 test {

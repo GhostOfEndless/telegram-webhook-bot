@@ -19,6 +19,8 @@ import ru.synthiq.entity.AppPhoto;
 import ru.synthiq.entity.BinaryContent;
 import ru.synthiq.exceptions.UploadFileException;
 import ru.synthiq.service.FileService;
+import ru.synthiq.service.enums.LinkType;
+import ru.synthiq.utils.CryptoTool;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,10 +38,13 @@ public class FileServiceImpl implements FileService {
     private String fileInfoUri;
     @Value("${telegram.service.file-storage.uri}")
     private String fileStorageUri;
+    @Value("${link.address}")
+    private String linkAddress;
 
     private final AppDocumentDAO appDocumentDAO;
     private final AppPhotoDAO appPhotoDAO;
     private final BinaryContentDAO binaryContentDAO;
+    private final CryptoTool cryptoTool;
 
     @Override
     public AppDocument processDoc(Message telegramMessage) {
@@ -58,7 +63,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public AppPhoto processPhoto(Message telegramMessage) {
         // TODO пока что обрабатываем только одно фото в сообщении
-        PhotoSize telegramPhoto = telegramMessage.getPhoto().getFirst();
+        PhotoSize telegramPhoto = telegramMessage.getPhoto().getLast();
         String fileId = telegramPhoto.getFileId();
         ResponseEntity<String> response = getFilePath(fileId);
         if (response.getStatusCode() == HttpStatus.OK) {
@@ -68,6 +73,12 @@ public class FileServiceImpl implements FileService {
         } else {
             throw new UploadFileException("Bad response from telegram service: " + response);
         }
+    }
+
+    @Override
+    public String generateLink(Long docId, LinkType linkType) {
+        var hash = cryptoTool.hashOf(docId);
+        return "http://"  + linkAddress + "/" + linkType + "?id=" + hash;
     }
 
     private BinaryContent getPersistentBinaryContent(ResponseEntity<String> response) {

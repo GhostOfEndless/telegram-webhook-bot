@@ -15,6 +15,7 @@ import ru.synthiq.exceptions.UploadFileException;
 import ru.synthiq.service.FileService;
 import ru.synthiq.service.MainService;
 import ru.synthiq.service.ProducerService;
+import ru.synthiq.service.enums.LinkType;
 import ru.synthiq.service.enums.ServiceCommand;
 
 import static ru.synthiq.entity.enums.UserState.BASIC_STATE;
@@ -70,9 +71,9 @@ public class MainServiceImpl implements MainService {
         // TODO: добавить сохранение документа
         try {
             AppDocument doc = fileService.processDoc(update.getMessage());
-            // TODO Добавить генерацию ссылки для скачивания документа
+            String link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
             var answer = "Документ успешно загружен! "
-                    + "Ссылка для скачивания: http://test.ru/get-doc/777";
+                    + "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException ex) {
             log.error(ex.getMessage());
@@ -111,9 +112,9 @@ public class MainServiceImpl implements MainService {
 
         try {
             AppPhoto photo = fileService.processPhoto(update.getMessage());
-            // TODO добавить генерацию ссылки для скачивания фото
+            String link = fileService.generateLink(photo.getId(), LinkType.GET_PHOTO);
             var answer = "Фото успешно загружено! " +
-                    "Ссылка для скачивания  http://test.ru/get-photo/777";
+                    "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException ex) {
             log.error(ex.getMessage());

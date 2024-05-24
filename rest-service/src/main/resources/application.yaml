@@ -7,3 +7,5 @@ spring:
     generate-ddl: true
 server:
   port: 8086
+
+salt: "Pq12GSnZ5CwkrmutojxQbM13cRi8speFya7600NUYKgThHAWJIfLdD9V4XEvzB"
