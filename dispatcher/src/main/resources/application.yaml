@@ -1,11 +1,11 @@
 telegram:
   bot:
-    token: "6687504052:AAHTO74sbMK2sje-C5bIMhYxHZa5Ru-7XXY"
+    token: ${TOKEN}
 spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: user
-    password: be46a388
+    username: ${RABBITMQ_LOGIN}
+    password: ${RABBITMQ_PASSWORD}
 server:
   port: 8083

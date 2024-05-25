@@ -1,11 +1,11 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5436/telegram
-    password: password
-    username: user
+    password: ${DB_PASSWORD}
+    username: ${DB_USER}
   jpa:
     generate-ddl: true
 server:
   port: 8086
 
-salt: "Pq12GSnZ5CwkrmutojxQbM13cRi8speFya7600NUYKgThHAWJIfLdD9V4XEvzB"
+salt: ${SALT}

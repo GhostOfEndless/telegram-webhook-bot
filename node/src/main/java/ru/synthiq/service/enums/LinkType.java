@@ -2,7 +2,7 @@ package ru.synthiq.service.enums;
 
 public enum LinkType {
 
-    GET_DOC("file/get-id"),
+    GET_DOC("file/get-doc"),
     GET_PHOTO("file/get-photo");
 
     private final String link;

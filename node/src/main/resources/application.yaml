@@ -2,12 +2,12 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: user
-    password: be46a388
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
   datasource:
     url: jdbc:postgresql://localhost:5436/telegram
-    password: password
-    username: user
+    password: ${DB_PASSWORD}
+    username: ${DB_USER}
   jpa:
     generate-ddl: true
 server:
@@ -15,13 +15,15 @@ server:
 
 telegram:
   bot:
-    token: "6687504052:AAHTO74sbMK2sje-C5bIMhYxHZa5Ru-7XXY"
+    token: ${TOKEN}
   service:
+    mail:
+      uri: http://127.0.0.1:8085/mail/send
     file-info:
       uri: https://api.telegram.org/bot{token}/getFile?file_id={fileId}
     file-storage:
       uri: https://api.telegram.org/file/bot{token}/{filePath}
 
-salt: "Pq12GSnZ5CwkrmutojxQbM13cRi8speFya7600NUYKgThHAWJIfLdD9V4XEvzB"
+salt: ${SALT}
 link:
   address: "127.0.0.1:8086"

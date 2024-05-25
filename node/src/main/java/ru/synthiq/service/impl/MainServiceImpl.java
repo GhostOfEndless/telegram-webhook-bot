@@ -12,6 +12,7 @@ import ru.synthiq.entity.AppPhoto;
 import ru.synthiq.entity.AppUser;
 import ru.synthiq.entity.RawData;
 import ru.synthiq.exceptions.UploadFileException;
+import ru.synthiq.service.AppUserService;
 import ru.synthiq.service.FileService;
 import ru.synthiq.service.MainService;
 import ru.synthiq.service.ProducerService;
@@ -31,6 +32,7 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final AppUserDAO appUserDAO;
     private final FileService fileService;
+    private final AppUserService appUserService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -47,7 +49,7 @@ public class MainServiceImpl implements MainService {
         } else if (BASIC_STATE.equals(userState)) {
             output = processServiceCommand(appUser, text);
         } else if (WAIT_FOR_EMAIL_STATE.equals(userState)) {
-            // TODO добавить обработку емейла
+            output = appUserService.setEmail(appUser, text);
         } else {
             log.error("Unknown user state: {}", userState);
             output = "Неизвестная ошибка! Введите /cancel и попробуйте снова!";
@@ -80,9 +82,6 @@ public class MainServiceImpl implements MainService {
             String error = "К сожалению, загрузка файла не удалась. Повторите попытку позже.";
             sendAnswer(error, chatId);
         }
-
-        var answer = "Документ успешно загружен! Ссылка для скачивания  http://test.ru/get-doc/777";
-        sendAnswer(answer, chatId);
     }
 
     private boolean isNotAllowedToSendContent(String chatId, AppUser appUser) {
@@ -131,8 +130,7 @@ public class MainServiceImpl implements MainService {
     private String processServiceCommand(AppUser appUser, String command) {
         var serviceCommand = ServiceCommand.fromValue(command);
         if (REGISTRATION.equals(serviceCommand)) {
-            // TODO добавить регистрацию
-            return "Временно недоступно";
+            return appUserService.registerUser(appUser);
         } else if (HELP.equals(serviceCommand)) {
             return help();
         } else if (START.equals(serviceCommand)) {
@@ -158,23 +156,22 @@ public class MainServiceImpl implements MainService {
     private AppUser findOrSaveAppUser(Update update) {
         var telegramUser = update.getMessage().getFrom();
 
-        AppUser persistentAppUser = appUserDAO.findAppUserByTelegramUserId(telegramUser.getId());
+        var persistentAppUser = appUserDAO.findByTelegramUserId(telegramUser.getId());
 
-        if (persistentAppUser == null) {
+        if (persistentAppUser.isEmpty()) {
             AppUser transientAppUser = AppUser.builder()
                     .telegramUserId(telegramUser.getId())
                     .username(telegramUser.getUserName())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
-                    // TODO изменить значение по умолчанию после регистрации
-                    .isActive(true)
+                    .isActive(false)
                     .state(BASIC_STATE)
                     .build();
 
             return appUserDAO.save(transientAppUser);
         }
 
-        return persistentAppUser;
+        return persistentAppUser.get();
     }
 
     private void saveRawData(Update update) {

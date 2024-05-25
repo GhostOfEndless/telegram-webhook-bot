@@ -1,0 +1,18 @@
+server:
+  port: 8085
+
+spring:
+  mail:
+    host: smtp.timeweb.ru
+    port: 2525
+    protocol: smtp
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
+    properties:
+      "[mail.smtp.starttls.enable]": true
+      "[mail.smtp.auth]": true
+
+
+service:
+  activation:
+    uri: "http://127.0.0.1:8086:/user/activation?id={id}"

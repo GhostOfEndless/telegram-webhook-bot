@@ -56,7 +56,7 @@ public class FileController {
         }
 
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
+                .contentType(MediaType.IMAGE_PNG)
                 .header("Content-Disposition", "attachment;")
                 .body(fileSystemResource);
     }
