@@ -10,8 +10,7 @@ spring:
     username: ${DB_USER}
   jpa:
     generate-ddl: true
-server:
-  port: 8083
+
 
 telegram:
   bot:
@@ -27,3 +26,5 @@ telegram:
 salt: ${SALT}
 link:
   address: "127.0.0.1:8086"
+server:
+  port: ${PORT:8080}

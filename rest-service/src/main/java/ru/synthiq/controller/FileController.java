@@ -1,14 +1,16 @@
 package ru.synthiq.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.synthiq.service.FileService;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -20,44 +22,48 @@ public class FileController {
 
 
     @GetMapping("/get-doc")
-    public ResponseEntity<?> getDoc(@RequestParam("id") String id) {
+    public void getDoc(@RequestParam("id") String id, HttpServletResponse response) {
         // TODO для формирования badRequest добавить ControllerAdvice
         var doc = fileService.getDocument(id);
         if (doc == null) {
-            return ResponseEntity.badRequest().build();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
+        response.setContentType(MediaType.parseMediaType(doc.getMimeType()).toString());
+        response.setHeader("Content-Disposition", "attachment; filename=" + doc.getDocName());
+        response.setStatus(HttpServletResponse.SC_OK);
+
         var binaryContent = doc.getBinaryContent();
 
-        var fileSystemResource = fileService.getFileSystemResource(binaryContent);
-
-        if (fileSystemResource == null) {
-            return ResponseEntity.internalServerError().build();
+        try (var out = response.getOutputStream()) {
+            out.write(binaryContent.getFileAsArrayOfBytes());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(doc.getMimeType()))
-                .header("Content-Disposition", "attachment; filename=" + doc.getDocName())
-                .body(fileSystemResource);
     }
 
     @GetMapping("/get-photo")
-    public ResponseEntity<?> getPhoto(@RequestParam("id") String id) {
+    public void getPhoto(@RequestParam("id") String id, HttpServletResponse response) {
         // TODO для формирования badRequest добавить ControllerAdvice
         var photo = fileService.getPhoto(id);
+
         if (photo == null) {
-            return ResponseEntity.badRequest().build();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
+
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        response.setHeader("Content-Disposition", "attachment;");
+        response.setStatus(HttpServletResponse.SC_OK);
+
         var binaryContent = photo.getBinaryContent();
 
-        var fileSystemResource = fileService.getFileSystemResource(binaryContent);
-
-        if (fileSystemResource == null) {
-            return ResponseEntity.internalServerError().build();
+        try (var out = response.getOutputStream()) {
+            out.write(binaryContent.getFileAsArrayOfBytes());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .header("Content-Disposition", "attachment;")
-                .body(fileSystemResource);
     }
 }

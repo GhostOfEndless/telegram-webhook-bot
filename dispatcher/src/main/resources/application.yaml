@@ -1,6 +1,8 @@
 telegram:
   bot:
-    token: ${TOKEN}
+    token: ${BOT_TOKEN}
+    url: ${BOT_URL}
+    path: ${BOT_PATH}
 spring:
   rabbitmq:
     host: localhost
@@ -9,3 +11,5 @@ spring:
     password: ${RABBITMQ_PASSWORD}
 server:
   port: 8083
+  ssl:
+    enabled: false

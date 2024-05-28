@@ -13,7 +13,7 @@ import static ru.synthiq.model.RabbitQueue.*;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UpdateController {
+public class UpdateProcessor {
 
     private final MessageUtils messageUtils;
     private final UpdateProducer updateProducer;
